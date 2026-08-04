@@ -1,16 +1,5 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-04T17:55:49.833281Z",
-  "courses": [
-    {
-      "id": "Yq5mwfx7biz9wrkMZkYciTbtnzd",
-      "title": "无表格发布验证课程",
-      "summary": "摘要：第二轮编辑验证标记；飞书修改后应自动同步到 GitHub Pages。",
-      "category": "公开课程",
-      "document_url": "https://l1ziko0ewe4.feishu.cn/wiki/Yq5mwfx7biz9wrkMZkYciTbtnzd",
-      "cover_url": "",
-      "updated_at": "",
-      "sort_order": 1
-    }
-  ]
+  "generated_at": "2026-08-04T17:57:39.725934Z",
+  "courses": []
 }
