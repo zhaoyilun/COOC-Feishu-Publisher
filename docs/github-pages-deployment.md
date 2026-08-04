@@ -12,6 +12,10 @@
 
 公开站点只读取已生成的 `site/data/courses.json`。飞书同步需要的 `FEISHU_APP_ID`、`FEISHU_APP_SECRET`、`FEISHU_WIKI_NODE_TOKEN` 与 `FEISHU_BITABLE_TABLE_ID` 只能保存为 GitHub Actions Secrets；不得写入仓库、网页或日志。
 
+## 同步后部署
+
+飞书同步使用 GitHub Actions 的 `GITHUB_TOKEN` 写入生成的公开目录；该类提交不会触发另一个 `push` 工作流。因此 `sync-feishu.yml` 在同步校验成功后，会检出最新 `main` 并直接部署 `site/` 到 Pages。不要移除此部署作业或改为依赖推送触发。
+
 ## 首次验收（2026-08-04）
 
 - Actions 运行 `30922861371` 的 Pages 部署成功。
