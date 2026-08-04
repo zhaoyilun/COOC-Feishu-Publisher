@@ -71,14 +71,18 @@ def title_and_order(value: Any) -> tuple[str, int]:
     return match.group("title").strip(), int(match.group("order"))
 
 
-def summary_from_raw_content(value: Any) -> str:
+def summary_from_raw_content(value: Any, title: str) -> str:
     content = scalar(value)
     if not content:
         return ""
     for line in content.splitlines():
         line = line.strip().lstrip("#").strip()
-        if line:
-            return line[:240]
+        if not line:
+            continue
+        normalized_line, _ = title_and_order(line)
+        if normalized_line == title:
+            continue
+        return line[:240]
     return ""
 
 
@@ -96,7 +100,7 @@ def normalize_nodes(nodes: list[dict[str, Any]], raw_content: dict[str, str], ba
             {
                 "id": node_token,
                 "title": title,
-                "summary": summary_from_raw_content(raw_content.get(document_id)),
+                "summary": summary_from_raw_content(raw_content.get(document_id), title),
                 "category": "公开课程",
                 "document_url": f"{base_url}/wiki/{quote(node_token)}",
                 "cover_url": "",

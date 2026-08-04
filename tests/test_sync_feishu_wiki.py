@@ -27,6 +27,15 @@ class WikiCatalogueTests(unittest.TestCase):
         self.assertEqual(payload["courses"][0]["document_url"], "https://tenant.feishu.cn/wiki/first")
         self.assertEqual(payload["courses"][2]["summary"], "")
 
+    def test_document_heading_is_not_used_as_its_summary(self):
+        payload = normalize_nodes(
+            [{"node_token": "course", "obj_token": "doc", "obj_type": "docx", "title": "001-课程"}],
+            {"doc": "# 001-课程\n真正的课程摘要"},
+            "https://tenant.feishu.cn",
+            "2026-08-05T00:00:00Z",
+        )
+        self.assertEqual(payload["courses"][0]["summary"], "真正的课程摘要")
+
     def test_non_feishu_base_url_is_rejected(self):
         with self.assertRaisesRegex(RuntimeError, "feishu.cn"):
             public_base_url("https://example.com")
