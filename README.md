@@ -8,7 +8,7 @@ A static COOC catalogue whose public entry point is a code-hosted site while cou
 Feishu Bitable (published course metadata)
   -> sync_feishu_bitable.py
   -> site/data/courses.json
-  -> static site / GitHub Pages or GitCode Pages
+  -> static site / GitHub Pages
   -> public visitor
 ```
 
