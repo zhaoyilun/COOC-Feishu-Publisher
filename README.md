@@ -43,3 +43,7 @@ Set application credentials only in GitHub Secrets:
 - `FEISHU_WIKI_PUBLIC_ROOT_TOKEN` — the `公开课程` Wiki node token
 
 Set `FEISHU_WIKI_BASE_URL` as a GitHub Actions variable, for example `https://your-tenant.feishu.cn`. The Feishu app needs the published `wiki:wiki:readonly` and `docx:document:readonly` scopes and permission to read the selected Wiki space. No Bitable is required for this flow.
+
+## Public-access boundary
+
+GitHub Pages always exposes the generated title and summary. The `阅读资料` link is independently controlled by Feishu: a tenant administrator must make `互联网获得链接的人` available, then the owner enables that scope on each public course document. Keep internal documents under `内部资料` and do not enable an external link for them.
