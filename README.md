@@ -1,36 +1,45 @@
 # COOC Feishu Publisher
 
-A static COOC catalogue whose public entry point is a code-hosted site while course metadata and long-form material are managed in Feishu.
+A serverless COOC catalogue: operators maintain only Feishu Wiki documents, while GitHub Actions periodically regenerates the public static catalogue and deploys GitHub Pages.
 
 ## Content flow
 
 ```text
-Feishu Bitable (published course metadata)
-  -> sync_feishu_bitable.py
-  -> site/data/courses.json
-  -> static site / GitHub Pages
-  -> public visitor
+Feishu Wiki
+├─ 公开课程/              # direct child documents become public course cards
+└─ 内部资料/              # never read by the publisher
+       -> GitHub Actions (scheduled or manual run)
+       -> site/data/courses.json
+       -> GitHub Pages
+       -> public visitor
 ```
 
-Each published card may link to a separately published Feishu document for full collaborative material. The site never exposes unpublished rows, secrets, or private Feishu links.
+The public site remains a stable GitHub URL. Each card links to its Feishu document; the long-form course content and attachments stay in Feishu. GitHub Actions is short-lived CI, not an application server.
+
+## Operator workflow
+
+1. Create or edit a course document directly under `公开课程`.
+2. Move a course out of `公开课程` to withdraw it from the next static sync.
+3. Run **Sync public COOC catalogue from Feishu Wiki** manually, or wait for its daily schedule.
+
+Only direct `docx` children of the configured `公开课程` node are emitted. An optional numeric prefix such as `001-课程名称` controls display order and is omitted from the public title. The first non-empty line of each document is used as the card summary.
 
 ## Local verification
 
 ```sh
-python3 scripts/sync_feishu_bitable.py --input samples/feishu-records.json
+python3 scripts/sync_feishu_wiki.py \
+  --input samples/feishu-wiki-nodes.json \
+  --base-url https://tenant.feishu.cn
 python3 -m unittest discover -s tests -v
 python3 -m http.server 4173 -d site
 ```
 
-Open `http://127.0.0.1:4173/`. The fixture intentionally includes one unpublished row; it must not appear.
+## Production configuration
 
-## Production credentials
-
-Set the following only in the shell or GitHub Secrets:
+Set application credentials only in GitHub Secrets:
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
-- `FEISHU_WIKI_NODE_TOKEN`（知识库链接中 `/wiki/` 后的节点 token）
-- `FEISHU_BITABLE_TABLE_ID`
+- `FEISHU_WIKI_PUBLIC_ROOT_TOKEN` — the `公开课程` Wiki node token
 
-Run `python3 scripts/sync_feishu_bitable.py` without `--input` to fetch Feishu Bitable records. See `docs/field-schema.md` before configuring the table.
+Set `FEISHU_WIKI_BASE_URL` as a GitHub Actions variable, for example `https://your-tenant.feishu.cn`. The Feishu app needs the published `wiki:wiki:readonly` and `docx:document:readonly` scopes and permission to read the selected Wiki space. No Bitable is required for this flow.

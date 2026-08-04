@@ -1,0 +1,19 @@
+{
+  "nodes": [
+    {
+      "node_token": "course-node-001",
+      "obj_token": "document-001",
+      "obj_type": "docx",
+      "title": "001-示例公开课程"
+    },
+    {
+      "node_token": "folder-node",
+      "obj_token": "folder-document",
+      "obj_type": "docx",
+      "title": "课程资料文件夹"
+    }
+  ],
+  "raw_content": {
+    "document-001": "这是一门由飞书文档维护的示例公开课程。\n后续正文与附件仍在飞书中协作。"
+  }
+}
