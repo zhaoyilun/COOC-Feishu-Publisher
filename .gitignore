@@ -1,0 +1,8 @@
+.DS_Store
+.env
+.venv/
+__pycache__/
+*.py[cod]
+site/data/*.local.json
+output/
+.playwright-cli/

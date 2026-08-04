@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="COOC 协作式开放在线课程公开目录。">
+  <title>COOC 协作式开放在线课程</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="hero">
+    <nav class="nav" aria-label="主导航">
+      <a class="brand" href="./">COOC</a>
+      <span>课程协同创建与公开展示</span>
+    </nav>
+    <div class="hero-content">
+      <p class="eyebrow">COLLABORATIVE OPEN ONLINE COURSE</p>
+      <h1>协同创建，持续更新的开放课程</h1>
+      <p>课程目录由飞书统一维护，公开站点自动生成并提供稳定访问入口。</p>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="catalogue-title">
+      <div>
+        <p class="eyebrow dark">公开课程目录</p>
+        <h2 id="catalogue-title">课程与资料</h2>
+      </div>
+      <p id="data-status" role="status">正在加载公开课程目录…</p>
+    </section>
+    <section id="course-grid" class="course-grid" aria-live="polite"></section>
+  </main>
+
+  <footer>
+    <span>COOC · 飞书内容管理与静态发布验证</span>
+    <span id="generated-at"></span>
+  </footer>
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-08-04T00:00:00Z",
+  "courses": [
+    {
+      "id": "rec_cooc_intro",
+      "title": "COOC 协同创建课程导论",
+      "summary": "展示协同创建、开放迭代与课程资源组织的公开介绍。",
+      "category": "协同课程",
+      "document_url": "",
+      "cover_url": "",
+      "updated_at": "2026-08-04",
+      "sort_order": 10
+    }
+  ]
+}
