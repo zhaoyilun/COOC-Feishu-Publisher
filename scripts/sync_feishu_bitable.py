@@ -124,10 +124,23 @@ def required_env(name: str) -> str:
     return value
 
 
+def resolve_bitable_app_token(wiki_node_token: str, token: str) -> str:
+    node = request_json(
+        "https://open.feishu.cn/open-apis/wiki/v2/spaces/get_node"
+        f"?token={quote(wiki_node_token)}",
+        token=token,
+    ).get("data", {}).get("node", {})
+    if node.get("obj_type") != "bitable":
+        raise RuntimeError("Wiki node does not reference a Bitable resource")
+    app_token = scalar(node.get("obj_token"))
+    if not app_token:
+        raise RuntimeError("Wiki node response did not include a Bitable app token")
+    return app_token
+
+
 def fetch_feishu_records() -> list[dict[str, Any]]:
     app_id = required_env("FEISHU_APP_ID")
     app_secret = required_env("FEISHU_APP_SECRET")
-    app_token = required_env("FEISHU_BITABLE_APP_TOKEN")
     table_id = required_env("FEISHU_BITABLE_TABLE_ID")
     auth = request_json(
         "https://open.feishu.cn/open-apis/auth/v3/tenant_access_token/internal",
@@ -135,6 +148,9 @@ def fetch_feishu_records() -> list[dict[str, Any]]:
         payload={"app_id": app_id, "app_secret": app_secret},
     )
     token = auth["tenant_access_token"]
+    app_token = os.environ.get("FEISHU_BITABLE_APP_TOKEN", "").strip()
+    if not app_token:
+        app_token = resolve_bitable_app_token(required_env("FEISHU_WIKI_NODE_TOKEN"), token)
     records: list[dict[str, Any]] = []
     page_token = ""
     while True:

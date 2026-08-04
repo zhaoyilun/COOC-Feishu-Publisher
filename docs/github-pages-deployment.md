@@ -10,7 +10,7 @@
 
 ## 内容与凭证边界
 
-公开站点只读取已生成的 `site/data/courses.json`。飞书同步需要的 `FEISHU_APP_ID`、`FEISHU_APP_SECRET`、`FEISHU_BITABLE_APP_TOKEN` 与 `FEISHU_BITABLE_TABLE_ID` 只能保存为 GitHub Actions Secrets；不得写入仓库、网页或日志。
+公开站点只读取已生成的 `site/data/courses.json`。飞书同步需要的 `FEISHU_APP_ID`、`FEISHU_APP_SECRET`、`FEISHU_WIKI_NODE_TOKEN` 与 `FEISHU_BITABLE_TABLE_ID` 只能保存为 GitHub Actions Secrets；不得写入仓库、网页或日志。
 
 ## 首次验收（2026-08-04）
 

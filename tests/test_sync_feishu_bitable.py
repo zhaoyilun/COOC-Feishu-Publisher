@@ -1,10 +1,11 @@
 import sys
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from sync_feishu_bitable import normalize_records
+from sync_feishu_bitable import normalize_records, resolve_bitable_app_token
 
 
 class NormalizeRecordsTests(unittest.TestCase):
@@ -47,6 +48,23 @@ class NormalizeRecordsTests(unittest.TestCase):
             "2026-08-04T00:00:00Z",
         )
         self.assertEqual([item["id"] for item in payload["courses"]], ["first", "a", "b"])
+
+    def test_wiki_node_resolves_its_bitable_app_token(self):
+        with patch(
+            "sync_feishu_bitable.request_json",
+            return_value={"data": {"node": {"obj_type": "bitable", "obj_token": "app_token"}}},
+        ) as request:
+            app_token = resolve_bitable_app_token("wiki_node", "tenant_token")
+        self.assertEqual(app_token, "app_token")
+        self.assertIn("token=wiki_node", request.call_args.args[0])
+
+    def test_wiki_node_must_reference_a_bitable(self):
+        with patch(
+            "sync_feishu_bitable.request_json",
+            return_value={"data": {"node": {"obj_type": "docx", "obj_token": "document_token"}}},
+        ):
+            with self.assertRaisesRegex(RuntimeError, "does not reference a Bitable"):
+                resolve_bitable_app_token("wiki_node", "tenant_token")
 
     def test_text_publish_markers_from_the_test_base_are_filtered(self):
         payload = normalize_records(

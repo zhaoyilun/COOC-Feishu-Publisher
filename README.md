@@ -30,7 +30,7 @@ Set the following only in the shell or GitHub Secrets:
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
-- `FEISHU_BITABLE_APP_TOKEN`
+- `FEISHU_WIKI_NODE_TOKEN`（知识库链接中 `/wiki/` 后的节点 token）
 - `FEISHU_BITABLE_TABLE_ID`
 
 Run `python3 scripts/sync_feishu_bitable.py` without `--input` to fetch Feishu Bitable records. See `docs/field-schema.md` before configuring the table.
