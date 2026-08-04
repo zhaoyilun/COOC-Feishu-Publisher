@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-04T17:51:56.964630Z",
+  "generated_at": "2026-08-04T17:54:13.806142Z",
   "courses": [
     {
       "id": "Yq5mwfx7biz9wrkMZkYciTbtnzd",
       "title": "无表格发布验证课程",
-      "summary": "001-无表格发布验证课程",
+      "summary": "摘要：公开根目录中的课程应自动出现在 GitHub Pages；本行用于初始同步验证。",
       "category": "公开课程",
       "document_url": "https://l1ziko0ewe4.feishu.cn/wiki/Yq5mwfx7biz9wrkMZkYciTbtnzd",
       "cover_url": "",
