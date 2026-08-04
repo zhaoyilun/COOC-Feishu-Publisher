@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-04T00:00:00Z",
+  "generated_at": "2026-08-04T15:52:35.940157Z",
   "courses": [
     {
-      "id": "rec_cooc_intro",
+      "id": "rec27V4bKlylEW",
       "title": "COOC 协同创建课程导论",
-      "summary": "展示协同创建、开放迭代与课程资源组织的公开介绍。",
-      "category": "协同课程",
+      "summary": "以公开课程目录串联飞书协同撰写与静态站点发布。",
+      "category": "协同创建",
       "document_url": "",
       "cover_url": "",
-      "updated_at": "2026-08-04",
+      "updated_at": "1785772800000",
       "sort_order": 10
     }
   ]
