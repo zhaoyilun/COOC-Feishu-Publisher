@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-08-05T05:24:47.992725Z",
+  "generated_at": "2026-08-05T07:32:02.289936Z",
   "courses": [
     {
       "id": "course-8c1a915333030d76",
@@ -8,8 +8,230 @@
       "summary": "摘要：第二轮编辑验证标记；飞书修改后应自动同步到 GitHub Pages。",
       "category": "公开课程",
       "course_url": "courses/course-8c1a91533303/",
+      "cover_url": "courses/course-8c1a91533303/assets/7f8b1d900124e4f4.png",
+      "published_at": "",
       "updated_at": "",
       "sort_order": 1
+    },
+    {
+      "id": "course-44186422240a0e7a",
+      "title": "全国100个数字化红色教育基地数字教程",
+      "summary": "",
+      "category": "课程建立",
+      "course_url": "courses/course-44186422240a/",
+      "cover_url": "courses/course-44186422240a/assets/0290f1178640e710.png",
+      "published_at": "2025-01-07",
+      "updated_at": "2025-01-07",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-9ccb217ff62793bb",
+      "title": "大学信息技术基础",
+      "summary": "信息技术的发展与人类的生活息息相关，其变革也深刻影响和推动着人类教育的变革和发展。《大学信息技术基础》（第1版）于2021年3月出版，出版后受到广大本科院校和职业院校师生的喜爱。然而，时至今日，第1版出版已经整整3年了，信息技术领域的发展和变化速度是任何其他技术领域都望尘莫及的，因此，伴随着人工智能、大数据和云计算等新一代信息技术的快速发展和国家提出“建设数字中国”和“推进教育数字化”等重要时代议题，本书做了相应更新，并推出第2版，积极展现信息技术相关领域的最新成果。中共中央",
+      "category": "课程建立",
+      "course_url": "courses/course-9ccb217ff627/",
+      "cover_url": "courses/course-9ccb217ff627/assets/642cb9c6f04f10be.jpg",
+      "published_at": "2024-05-20",
+      "updated_at": "2024-05-20",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-a2f27129d8ec9cd7",
+      "title": "Blockly创意趣味编程",
+      "summary": "基于COOC平台建设在线协作《Blockly创意趣味编程》课程教学资源，在Blockly开发小组的基础上，汇集了多所高校共同协作开发，统筹规划知识体系，是一套不断改进和完善的在线书籍。",
+      "category": "Blockly",
+      "course_url": "courses/course-a2f27129d8ec/",
+      "cover_url": "courses/course-a2f27129d8ec/assets/49ef3700664308b8.png",
+      "published_at": "2023-10-07",
+      "updated_at": "2023-10-07",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-08f1f08a57c10e60",
+      "title": "Theories and Practices of Self-Driving Vehicles",
+      "summary": "With the rapid advancement of driverless technology in the past two years, major vehicle companies and driverless system solution providers, such as Baidu Apollo, Jingchi, etc., have also been making continuous efforts to commercialize driv",
+      "category": "课程建立",
+      "course_url": "courses/course-08f1f08a57c1/",
+      "cover_url": "",
+      "published_at": "2022-04-08",
+      "updated_at": "2022-04-08",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-184e68dff4ea51bc",
+      "title": "甘肃省红色教育资源",
+      "summary": "学习课程",
+      "category": "课程建立",
+      "course_url": "courses/course-184e68dff4ea/",
+      "cover_url": "courses/course-184e68dff4ea/assets/5d9f37716f63e792.jpg",
+      "published_at": "2022-01-16",
+      "updated_at": "2022-01-16",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-8d947e620712ca63",
+      "title": "人工智能技术基础",
+      "summary": "人工智能技术基础，适合零基础读者快速了解人工智能通识教程",
+      "category": "课程建立",
+      "course_url": "courses/course-8d947e620712/",
+      "cover_url": "",
+      "published_at": "2021-10-10",
+      "updated_at": "2021-10-10",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-2dd3818601b90b0d",
+      "title": "新一代信息技术",
+      "summary": "数字化、网络化、智能化是新一轮科技革命的突出特征，也是新一代信息技术的核心。2018年两院院士大会上提到：“世界正在进入以信息产业为主导的经济发展时期。我们要把握数字化、网络化、智能化融合发展的契机，以信息化、智能化为杠杆培育新动能。”近年来以大数据、云计算、人工智能等为首的新一代信息技术重塑着社会各个领域的发展和布局，对人们的工作、生活、学习和文化传播方式也产生了积极影响。本书主要介绍大数据、云计算、物联网、人工智能等新一代信息技术的概念、特点、应用现状及未来发展趋势。",
+      "category": "课程建立",
+      "course_url": "courses/course-2dd3818601b9/",
+      "cover_url": "courses/course-2dd3818601b9/assets/94fff3e87af5547f.png",
+      "published_at": "2021-01-21",
+      "updated_at": "2021-01-21",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-aba135e85babbfb9",
+      "title": "基于机器人的实践方法",
+      "summary": "本课程主要包括计算机基础知识和可视化编程的学习，最后将可视化编程程序与机器人的实践结合，课程会兼顾基础概念和高级应用。另外，根据非计算机专业学生学习、工作、生活的需要，本课程将理论和应用技术有机地结合在一起，不仅能帮助学生掌握计算机基础知识、Blockly的使用，还可以培养学生在各专业领域中应用计算机解决问题的思维方式和创新能力。",
+      "category": "课程建立",
+      "course_url": "courses/course-aba135e85bab/",
+      "cover_url": "courses/course-aba135e85bab/assets/51e559de1527b7d2.png",
+      "published_at": "2020-05-28",
+      "updated_at": "2020-05-28",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-22b34abec1f380d6",
+      "title": "数字逻辑（数字电路）",
+      "summary": "本课程讲授数字电子技术的基本概念，基本原理和基本分析方法，包括逻辑函数的表示方法和化简方法，门电路的工作原理和组合逻辑电路的分析和设计方法，触发器的工作原理和时序逻辑的分析和设计方法。",
+      "category": "课程建立",
+      "course_url": "courses/course-22b34abec1f3/",
+      "cover_url": "courses/course-22b34abec1f3/assets/3eb3202fa6975cd2.png",
+      "published_at": "2019-07-24",
+      "updated_at": "2019-07-24",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-c5fc0c67cb0d1791",
+      "title": "无人驾驶原理与实践",
+      "summary": "近两年来随着无人驾驶技术突飞猛进，各大整车企业、无人驾驶系统解决方案提供商（如百度阿波罗、景驰等）也在不断努力将无人驾驶技术向商业化落地推进。显然，无人驾驶技术已经不再是遥不可及的“未来技术”。无人驾驶技术范畴不仅仅包括车辆控制、路径规划、感知融合等领域，还包括人工智能、机器学习、深度学习、强化学习等前沿领域，无人驾驶在未来的5-10年里必将会掀起一场新的技术和市场革命。",
+      "category": "课程建立",
+      "course_url": "courses/course-c5fc0c67cb0d/",
+      "cover_url": "",
+      "published_at": "2019-06-27",
+      "updated_at": "2019-06-27",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-13d3630ff56b7aad",
+      "title": "信息技术基础",
+      "summary": "本书将理论与实践相结合，从计算机基础知识讲起，并与时俱进，积极展现计算机相关领域的最新成果，考虑到非计算机专业学生的工作、学习以及日常需求，结合基础知识，详细讲解了常用且版本较新的工具软件的使用。融入计算思维，使学生能够更深入、更系统地了解计算机科学中的概念、原理、技术和解决问题的方法，能够在较高层次上利用计算机处理问题。",
+      "category": "课程建立",
+      "course_url": "courses/course-13d3630ff56b/",
+      "cover_url": "courses/course-13d3630ff56b/assets/723f6239ce3853e8.png",
+      "published_at": "2019-06-12",
+      "updated_at": "2019-06-12",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-aa81f7ba30487547",
+      "title": "Blockly Games",
+      "summary": "Blockly Games是谷歌的一个开源项目，是一系列教授编程的教育游戏的合集。它专为没有计算机编程经验的青少年设计，旨在帮助孩子们实现自我教学和自定进度的学习，鼓励明天的程序员！在这些游戏结束时，玩家就可以开始使用传统的编程语言进行相关的学习了。",
+      "category": "实验",
+      "course_url": "courses/course-aa81f7ba3048/",
+      "cover_url": "courses/course-aa81f7ba3048/assets/0fe55dc458438dc0.png",
+      "published_at": "2019-01-15",
+      "updated_at": "2019-01-15",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-42798bad110c43e0",
+      "title": "XML语言",
+      "summary": "《xml语言》旨在为xml语言学习者提供基础知识点讲解和学习。",
+      "category": "课程建立",
+      "course_url": "courses/course-42798bad110c/",
+      "cover_url": "",
+      "published_at": "2018-08-20",
+      "updated_at": "2018-08-20",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-588662c48dfc5709",
+      "title": "幼儿园多媒体课件制作微课教程",
+      "summary": "幼儿园多媒体课件的制作涉及到幼儿教育学理论、心理学理论、学习理论、教学设计、美学等多方面的知识，课件的制作工具也层出不穷，各有特色。如何综合运用相关理论和工具，设计并制作出具有教育性、实用性、适宜性、艺术性和交互性的幼儿园多媒体课件，是本教程关注的焦点问题。教程选取新编幼儿园大班教材中的实例，由浅入深地介绍了幼儿园多媒体课件的设计方法和课件制作工具的使用技巧，方便学前教育专业学生和幼儿园教师学习和参考。",
+      "category": "课程建立",
+      "course_url": "courses/course-588662c48dfc/",
+      "cover_url": "courses/course-588662c48dfc/assets/5292d23840bae87b.png",
+      "published_at": "2018-02-27",
+      "updated_at": "2018-02-27",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-edc392fa99839067",
+      "title": "计算机导论",
+      "summary": "《基于机器人的实践方法》这门COOC计算思维导论课程旨在为大学新生提供以计算思维为基础的综合性公共基础课程，内容以计算机相关知识为主，但不限于计算机专业，涵盖物理、数学、生命科学、哲学等多种学科。课程以COOC为基础平台，计算思维导向为核心，Github、Gitbook和pencil code为主要工具，构建了一门协作式开放课程。",
+      "category": "课程建立",
+      "course_url": "courses/course-edc392fa9983/",
+      "cover_url": "courses/course-edc392fa9983/assets/492ef54b5e6a44c8.png",
+      "published_at": "2017-12-14",
+      "updated_at": "2017-12-14",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-90cb531b887b0b43",
+      "title": "移动应用开发——Android",
+      "summary": "基于COOC平台建设在线的移动应用开发课程教学资源，在北京信息科技大学、北京大学、中原工学院、青岛工学院、长沙学院等多所高校现有教学资源的基础上，统筹规划知识体系，完成的一套较为完整的在线教案。",
+      "category": "Android",
+      "course_url": "courses/course-90cb531b887b/",
+      "cover_url": "courses/course-90cb531b887b/assets/a0eb916d691aa1a1.svg",
+      "published_at": "2017-01-22",
+      "updated_at": "2017-01-22",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-38f12a40b8151456",
+      "title": "App Inventor - 零基础Android移动应用开发",
+      "summary": "作者：浙江大学城市学院 吴明晖",
+      "category": "Android",
+      "course_url": "courses/course-38f12a40b815/",
+      "cover_url": "courses/course-38f12a40b815/assets/7fc3cb685d28df46.png",
+      "published_at": "2016-01-22",
+      "updated_at": "2016-01-22",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-4486ebef4ec91833",
+      "title": "嵌入式系统底层开发",
+      "summary": "嵌入式系统无处不在，本课程旨在带你走进嵌入式系统开发的底层，深入的了解嵌入式系统开发的知识。",
+      "category": "嵌入式 / 操作系统",
+      "course_url": "courses/course-4486ebef4ec9/",
+      "cover_url": "courses/course-4486ebef4ec9/assets/42dfb358ec446031.png",
+      "published_at": "2015-11-27",
+      "updated_at": "2015-11-27",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-ff47e513ebe148e0",
+      "title": "使用 GitHub Pages 和 GitBook 建立在线课程",
+      "summary": "GitHub是当今最流行的开源协作平台，GitBook是非常受欢迎的创作开源图书的平台，那么这两个工具能和教育碰撞出什么样的火花呢？",
+      "category": "课程建立",
+      "course_url": "courses/course-ff47e513ebe1/",
+      "cover_url": "courses/course-ff47e513ebe1/assets/124c1d74f3dccc2d.png",
+      "published_at": "2015-11-27",
+      "updated_at": "2015-11-27",
+      "sort_order": 999999
+    },
+    {
+      "id": "course-0826d4e26a923301",
+      "title": "Build Your First App",
+      "summary": "Android 开发已经热火朝天，本课程将向你详细讲解 Android 的异步任务和基本组件之一的 Activity",
+      "category": "Android",
+      "course_url": "courses/course-0826d4e26a92/",
+      "cover_url": "courses/course-0826d4e26a92/assets/47e872068becaabc.png",
+      "published_at": "2015-11-27",
+      "updated_at": "2015-11-27",
+      "sort_order": 999999
     }
   ]
 }
