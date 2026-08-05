@@ -1,0 +1,2 @@
+COOC 静态发布媒体验证附件
+该文件应仅从 GitHub Pages 下载。
