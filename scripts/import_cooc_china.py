@@ -288,8 +288,7 @@ def document_blocks(course: CourseSource) -> list[dict[str, Any]]:
         text_block("text", f"原始发布日期：{course.published_at}"),
     ]
     blocks.extend(text_block(block.kind, block.text, block.href) for block in course.blocks)
-    if course.cover_url:
-        blocks.append({"block_type": 27, "image": {"caption": {"content": f"{course.title} 课程封面"}}})
+    blocks.append({"block_type": 27, "image": {"caption": {"content": f"{course.title} 课程封面"}}})
     return blocks
 
 
@@ -378,7 +377,8 @@ def generated_cover(title: str) -> CoverAsset:
 
 def cover_asset(course: CourseSource) -> CoverAsset | None:
     if not course.cover_url:
-        return None
+        print(f"warning: generated fallback cover for {course.title}", flush=True)
+        return generated_cover(course.title)
     try:
         content = fetch_bytes(course.cover_url)
     except RuntimeError:
@@ -418,13 +418,26 @@ def upload_cover(document_id: str, image_block_id: str, asset: CoverAsset, token
 def repair_missing_cover(document_id: str, asset: CoverAsset | None, token: str) -> None:
     if asset is None:
         return
+    image_found = False
     for block in list_document_blocks(document_id, token):
         kind, data = block_data(block)
+        if kind == "image":
+            image_found = True
         if kind == "image" and not scalar(data.get("token")):
             block_id = scalar(block.get("block_id"))
             if not block_id:
                 raise RuntimeError("existing image block did not include a block id")
             upload_cover(document_id, block_id, asset, token)
+    if not image_found:
+        created_blocks = create_document_blocks(
+            document_id,
+            [{"block_type": 27, "image": {"caption": {"content": "课程封面"}}}],
+            token,
+        )
+        image_block_id = scalar(created_blocks[0].get("block_id"))
+        if not image_block_id:
+            raise RuntimeError("created image block did not include a block id")
+        upload_cover(document_id, image_block_id, asset, token)
 
 
 def migrate_courses(courses: list[CourseSource], dry_run: bool = False) -> tuple[list[str], list[str]]:
