@@ -1,0 +1,28 @@
+name: Import authorized COOC embedded systems book into Feishu
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type IMPORT_COOC_EMBEDDED_SYSTEM_BOOK to append the authorized full text to Feishu
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  import:
+    if: github.event.inputs.confirm == 'IMPORT_COOC_EMBEDDED_SYSTEM_BOOK'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Import authorized book chapters and images into Feishu
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_WIKI_PUBLIC_ROOT_TOKEN: ${{ secrets.FEISHU_WIKI_PUBLIC_ROOT_TOKEN }}
+        run: python scripts/import_embedded_system_book.py --confirm IMPORT_COOC_EMBEDDED_SYSTEM_BOOK

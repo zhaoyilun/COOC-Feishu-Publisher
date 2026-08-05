@@ -23,6 +23,12 @@ GitHub Pages（唯一学习入口）
 
 初始迁移后，课程编辑只在飞书完成：修改标题、正文、图片或附件，然后运行同步工作流或等待每日计划任务。`课程分类：` 与 `原始发布日期：` 是文档内的可见元数据，用于首页分类、发布时间和排序；不显示在公开课程正文中。
 
+## 授权图书全文试点
+
+**Import authorized COOC embedded systems book into Feishu** 是 `COOC-China/Embedded-System-Development-Book` 的一次性全文初始化工具。它依据 `SUMMARY.md` 导入仓库中全部非重复的 Markdown 正文和本地图片到现有的 `嵌入式系统底层开发` 飞书课程文档，并把旧的“学习课程”外部链接替换为本页维护说明。原始在线演示脚本不会嵌入公开页；请由编辑者在飞书中补充本地课件或附件。
+
+运行时在 `confirm` 填写 `IMPORT_COOC_EMBEDDED_SYSTEM_BOOK`。导入标记已存在时任务会安全退出，不会覆盖教师后续在飞书中的修改。全文迁移完成后，日常更新只编辑飞书并运行常规发布工作流；不要重复运行此初始化任务。若需撤回初始化，请在飞书版本历史中恢复到导入前版本，再运行发布工作流。
+
 ## 本地验证
 
 ```sh
@@ -31,6 +37,9 @@ python3 scripts/sync_feishu_wiki.py --input samples/feishu-wiki-nodes.json
 
 # 对已提取的官方 20 门课程执行不写入飞书的演练
 python3 scripts/import_cooc_china.py --source-directory /path/to/posts --dry-run
+
+# 对已检出的授权图书全文执行不写入飞书的演练
+python3 scripts/import_embedded_system_book.py --source-directory /path/to/Embedded-System-Development-Book --dry-run
 
 # 运行全部测试
 python3 -m unittest discover -s tests -v
