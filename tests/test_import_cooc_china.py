@@ -1,6 +1,7 @@
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,6 +63,18 @@ categories: '教程'
         self.assertEqual(blocks[1]["text"]["elements"][0]["text_run"]["content"], "课程分类：教程")
         self.assertEqual(blocks[2]["text"]["elements"][0]["text_run"]["content"], "原始发布日期：2024-01-02")
         self.assertEqual(blocks[-1]["block_type"], 27)
+
+    def test_wiki_document_is_created_as_an_origin_docx_node(self):
+        with patch("import_cooc_china.request_json", return_value={"data": {"node": {"obj_token": "docx-token"}}}) as request:
+            from import_cooc_china import create_wiki_document
+            node = create_wiki_document("space", "parent", "课程", "tenant-token")
+        self.assertEqual(node["obj_token"], "docx-token")
+        self.assertEqual(request.call_args.kwargs["payload"], {
+            "obj_type": "docx",
+            "parent_node_token": "parent",
+            "node_type": "origin",
+            "title": "课程",
+        })
 
     def test_local_source_directory_is_sorted_by_publish_date(self):
         with tempfile.TemporaryDirectory() as temporary:

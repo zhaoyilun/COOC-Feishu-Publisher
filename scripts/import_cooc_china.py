@@ -287,7 +287,7 @@ def create_wiki_document(space_id: str, parent_node_token: str, title: str, toke
     response = request_json(
         f"https://open.feishu.cn/open-apis/wiki/v2/spaces/{quote(space_id)}/nodes",
         method="POST",
-        payload={"obj_type": "docx", "parent_node_token": parent_node_token, "title": title},
+        payload={"obj_type": "docx", "parent_node_token": parent_node_token, "node_type": "origin", "title": title},
         token=token,
     )
     node = response.get("data", {}).get("node", {})
