@@ -71,7 +71,16 @@ def request_json(url: str, method: str = "GET", payload: dict[str, Any] | None =
     try:
         with urlopen(request, timeout=30) as response:
             response_payload = json.load(response)
-    except (HTTPError, URLError, TimeoutError) as error:
+    except HTTPError as error:
+        try:
+            response_payload = json.loads(error.read().decode("utf-8"))
+        except (UnicodeDecodeError, json.JSONDecodeError):
+            response_payload = {}
+        message = scalar(response_payload.get("msg")) or str(error)
+        code = scalar(response_payload.get("code"))
+        detail = f" code={code}" if code else ""
+        raise RuntimeError(f"Feishu API request failed: HTTP {error.code}{detail} {message}") from error
+    except (URLError, TimeoutError) as error:
         raise RuntimeError(f"Feishu API request failed: {error}") from error
     if response_payload.get("code", 0) != 0:
         raise RuntimeError(f"Feishu API error: {response_payload.get('msg', 'unknown error')}")
