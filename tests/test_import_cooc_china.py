@@ -6,7 +6,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from import_cooc_china import document_blocks, fetch_local_courses, parse_course
+from import_cooc_china import document_blocks, fetch_local_courses, generated_cover, parse_course
 
 
 class CoocChinaImportTests(unittest.TestCase):
@@ -63,6 +63,13 @@ categories: '教程'
         self.assertEqual(blocks[1]["text"]["elements"][0]["text_run"]["content"], "课程分类：教程")
         self.assertEqual(blocks[2]["text"]["elements"][0]["text_run"]["content"], "原始发布日期：2024-01-02")
         self.assertEqual(blocks[-1]["block_type"], 27)
+
+    def test_generated_cover_is_a_self_contained_svg(self):
+        cover = generated_cover("示例课程")
+        self.assertTrue(cover.generated)
+        self.assertEqual(cover.filename, "cooc-course-cover.svg")
+        self.assertIn(b"<svg", cover.content)
+        self.assertIn("示例课程".encode("utf-8"), cover.content)
 
     def test_wiki_document_is_created_as_an_origin_docx_node(self):
         with patch("import_cooc_china.request_json", return_value={"data": {"node": {"obj_token": "docx-token"}}}) as request:

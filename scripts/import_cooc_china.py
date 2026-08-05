@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import html
 import json
 import mimetypes
 import re
@@ -18,7 +19,9 @@ from urllib.parse import quote, urlsplit, urlunsplit
 from urllib.request import Request, urlopen
 
 from sync_feishu_wiki import (
+    block_data,
     list_direct_children,
+    list_document_blocks,
     request_json,
     resolve_wiki_node,
     required_env,
@@ -61,6 +64,13 @@ class CourseSource:
     blocks: tuple[ContentBlock, ...]
     course_url: str
     cover_url: str
+
+
+@dataclass(frozen=True)
+class CoverAsset:
+    filename: str
+    content: bytes
+    generated: bool = False
 
 
 def encoded_url(url: str) -> str:
@@ -352,22 +362,46 @@ def filename_from_url(url: str) -> str:
     return name or "course-cover.png"
 
 
-def upload_cover(document_id: str, image_block_id: str, image_url: str, token: str) -> None:
-    content = fetch_bytes(image_url)
+def generated_cover(title: str) -> CoverAsset:
+    label = html.escape(title[:26])
+    content = (
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540">'
+        f'<rect width="960" height="540" fill="#235884"/>'
+        f'<rect y="420" width="960" height="120" fill="#0eabae"/>'
+        f'<text x="70" y="110" fill="#9df0ed" font-family="Arial, sans-serif" font-size="34" font-weight="700">COOC</text>'
+        f'<text x="70" y="230" fill="#ffffff" font-family="Arial, sans-serif" font-size="42">{label}</text>'
+        f'<text x="70" y="285" fill="#d8f4f3" font-family="Arial, sans-serif" font-size="25">协同式开放在线课程</text>'
+        f'</svg>'
+    ).encode("utf-8")
+    return CoverAsset(filename="cooc-course-cover.svg", content=content, generated=True)
+
+
+def cover_asset(course: CourseSource) -> CoverAsset | None:
+    if not course.cover_url:
+        return None
+    try:
+        content = fetch_bytes(course.cover_url)
+    except RuntimeError:
+        print(f"warning: generated fallback cover for {course.title}", flush=True)
+        return generated_cover(course.title)
     if not content:
-        raise RuntimeError("COOC-China cover image was empty")
-    filename = filename_from_url(image_url)
+        print(f"warning: generated fallback cover for {course.title}", flush=True)
+        return generated_cover(course.title)
+    return CoverAsset(filename=filename_from_url(course.cover_url), content=content)
+
+
+def upload_cover(document_id: str, image_block_id: str, asset: CoverAsset, token: str) -> None:
     response = multipart_request(
         "https://open.feishu.cn/open-apis/drive/v1/medias/upload_all",
         {
-            "file_name": filename,
+            "file_name": asset.filename,
             "parent_type": "docx_image",
             "parent_node": image_block_id,
-            "size": str(len(content)),
+            "size": str(len(asset.content)),
             "extra": json.dumps({"drive_route_token": document_id}),
         },
-        filename,
-        content,
+        asset.filename,
+        asset.content,
         token,
     )
     file_token = scalar(response.get("data", {}).get("file_token"))
@@ -381,6 +415,18 @@ def upload_cover(document_id: str, image_block_id: str, image_url: str, token: s
     )
 
 
+def repair_missing_cover(document_id: str, asset: CoverAsset | None, token: str) -> None:
+    if asset is None:
+        return
+    for block in list_document_blocks(document_id, token):
+        kind, data = block_data(block)
+        if kind == "image" and not scalar(data.get("token")):
+            block_id = scalar(block.get("block_id"))
+            if not block_id:
+                raise RuntimeError("existing image block did not include a block id")
+            upload_cover(document_id, block_id, asset, token)
+
+
 def migrate_courses(courses: list[CourseSource], dry_run: bool = False) -> tuple[list[str], list[str]]:
     if dry_run:
         return [course.title for course in courses], []
@@ -389,23 +435,31 @@ def migrate_courses(courses: list[CourseSource], dry_run: bool = False) -> tuple
     root = resolve_wiki_node(root_token, token)
     space_id = scalar(root["space_id"])
     existing_nodes = list_direct_children(space_id, root_token, token)
-    existing_titles = {title_and_order(node.get("title"))[0] for node in existing_nodes if node.get("obj_type") == "docx"}
+    existing_documents = {
+        title_and_order(node.get("title"))[0]: scalar(node.get("obj_token"))
+        for node in existing_nodes
+        if node.get("obj_type") == "docx" and scalar(node.get("obj_token"))
+    }
     created: list[str] = []
     skipped: list[str] = []
     for course in courses:
-        if course.title in existing_titles:
+        asset = cover_asset(course)
+        existing_document = existing_documents.get(course.title)
+        if existing_document:
+            repair_missing_cover(existing_document, asset, token)
             skipped.append(course.title)
             continue
+        print(f"importing: {course.title}", flush=True)
         node = create_wiki_document(space_id, root_token, course.title, token)
         document_id = scalar(node["obj_token"])
         requested_blocks = document_blocks(course)
         created_blocks = create_document_blocks(document_id, requested_blocks, token)
-        if course.cover_url:
+        if asset:
             image_index = next(index for index, block in enumerate(requested_blocks) if block["block_type"] == 27)
             image_block_id = scalar(created_blocks[image_index].get("block_id"))
             if not image_block_id:
                 raise RuntimeError("created image block did not include a block id")
-            upload_cover(document_id, image_block_id, course.cover_url, token)
+            upload_cover(document_id, image_block_id, asset, token)
         created.append(course.title)
     return created, skipped
 
