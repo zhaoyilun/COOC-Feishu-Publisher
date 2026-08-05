@@ -1,6 +1,6 @@
 {
   "schema_version": 2,
-  "generated_at": "2026-08-05T07:32:02.289936Z",
+  "generated_at": "2026-08-05T07:39:14.509486Z",
   "courses": [
     {
       "id": "course-8c1a915333030d76",
@@ -52,7 +52,7 @@
       "summary": "With the rapid advancement of driverless technology in the past two years, major vehicle companies and driverless system solution providers, such as Baidu Apollo, Jingchi, etc., have also been making continuous efforts to commercialize driv",
       "category": "课程建立",
       "course_url": "courses/course-08f1f08a57c1/",
-      "cover_url": "",
+      "cover_url": "courses/course-08f1f08a57c1/assets/b8deba55797548f4.svg",
       "published_at": "2022-04-08",
       "updated_at": "2022-04-08",
       "sort_order": 999999
@@ -74,7 +74,7 @@
       "summary": "人工智能技术基础，适合零基础读者快速了解人工智能通识教程",
       "category": "课程建立",
       "course_url": "courses/course-8d947e620712/",
-      "cover_url": "",
+      "cover_url": "courses/course-8d947e620712/assets/244192b48a27c952.svg",
       "published_at": "2021-10-10",
       "updated_at": "2021-10-10",
       "sort_order": 999999
@@ -118,7 +118,7 @@
       "summary": "近两年来随着无人驾驶技术突飞猛进，各大整车企业、无人驾驶系统解决方案提供商（如百度阿波罗、景驰等）也在不断努力将无人驾驶技术向商业化落地推进。显然，无人驾驶技术已经不再是遥不可及的“未来技术”。无人驾驶技术范畴不仅仅包括车辆控制、路径规划、感知融合等领域，还包括人工智能、机器学习、深度学习、强化学习等前沿领域，无人驾驶在未来的5-10年里必将会掀起一场新的技术和市场革命。",
       "category": "课程建立",
       "course_url": "courses/course-c5fc0c67cb0d/",
-      "cover_url": "",
+      "cover_url": "courses/course-c5fc0c67cb0d/assets/bdbbc1606d878be3.svg",
       "published_at": "2019-06-27",
       "updated_at": "2019-06-27",
       "sort_order": 999999
@@ -151,7 +151,7 @@
       "summary": "《xml语言》旨在为xml语言学习者提供基础知识点讲解和学习。",
       "category": "课程建立",
       "course_url": "courses/course-42798bad110c/",
-      "cover_url": "",
+      "cover_url": "courses/course-42798bad110c/assets/0f870f231c4267c5.svg",
       "published_at": "2018-08-20",
       "updated_at": "2018-08-20",
       "sort_order": 999999
