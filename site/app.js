@@ -26,13 +26,11 @@ function renderCourse(course) {
   updated.textContent = text(course.updated_at) ? `更新：${course.updated_at}` : '持续更新';
   footer.append(updated);
 
-  if (text(course.document_url)) {
+  if (text(course.course_url)) {
     const link = document.createElement('a');
     link.className = 'document-link';
-    link.href = course.document_url;
-    link.target = '_blank';
-    link.rel = 'noopener noreferrer';
-    link.textContent = '阅读资料';
+    link.href = text(course.course_url);
+    link.textContent = '进入课程';
     footer.append(link);
   } else {
     const unavailable = document.createElement('span');

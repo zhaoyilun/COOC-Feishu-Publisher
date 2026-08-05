@@ -1,14 +1,13 @@
 {
-  "schema_version": 1,
-  "generated_at": "2026-08-04T18:00:07.911786Z",
+  "schema_version": 2,
+  "generated_at": "2026-08-05T00:00:00Z",
   "courses": [
     {
-      "id": "Yq5mwfx7biz9wrkMZkYciTbtnzd",
-      "title": "无表格发布验证课程",
-      "summary": "摘要：第二轮编辑验证标记；飞书修改后应自动同步到 GitHub Pages。",
+      "id": "course-f1f61cf9154a5d13",
+      "title": "示例公开课程",
+      "summary": "这是一门由飞书知识库维护、由 GitHub Pages 完整公开访问的示例课程。",
       "category": "公开课程",
-      "document_url": "https://l1ziko0ewe4.feishu.cn/wiki/Yq5mwfx7biz9wrkMZkYciTbtnzd",
-      "cover_url": "",
+      "course_url": "courses/course-f1f61cf9154a/",
       "updated_at": "",
       "sort_order": 1
     }

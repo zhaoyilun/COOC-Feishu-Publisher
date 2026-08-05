@@ -1,4 +1,4 @@
-name: Sync public COOC catalogue from Feishu Wiki
+name: Publish complete COOC courses from Feishu Wiki
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: sync-feishu-catalogue
+  group: sync-feishu-courses
   cancel-in-progress: false
 
 jobs:
@@ -22,21 +22,20 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - name: Generate public catalogue
+      - name: Generate complete public course site
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
           FEISHU_WIKI_PUBLIC_ROOT_TOKEN: ${{ secrets.FEISHU_WIKI_PUBLIC_ROOT_TOKEN }}
-          FEISHU_WIKI_BASE_URL: ${{ vars.FEISHU_WIKI_BASE_URL }}
         run: python scripts/sync_feishu_wiki.py
-      - name: Verify public data mapping
+      - name: Verify static publication mapping
         run: python -m unittest discover -s tests -v
-      - name: Commit generated catalogue when changed
+      - name: Commit generated public course site when changed
         run: |
           git config user.email 'github-actions[bot]@users.noreply.github.com'
           git config user.name 'github-actions[bot]'
-          git add site/data/courses.json
-          git diff --cached --quiet || git commit -m 'chore: sync public course catalogue'
+          git add site
+          git diff --cached --quiet || git commit -m 'chore: sync public course site'
           git push
 
   deploy:

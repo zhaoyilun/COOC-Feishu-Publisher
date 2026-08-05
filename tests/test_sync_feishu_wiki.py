@@ -1,44 +1,78 @@
+import json
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
-from sync_feishu_wiki import list_direct_children, normalize_nodes, public_base_url, resolve_wiki_node
+from sync_feishu_wiki import (
+    fixture_source,
+    list_direct_children,
+    list_document_blocks,
+    publish_static_site,
+    render_inline,
+    resolve_wiki_node,
+)
 
 
-class WikiCatalogueTests(unittest.TestCase):
-    def test_only_direct_docx_children_are_published_in_title_order(self):
-        payload = normalize_nodes(
+class WikiPublisherTests(unittest.TestCase):
+    def publish_fixture(self, directory: Path):
+        nodes, documents, downloader = fixture_source(ROOT / "samples" / "feishu-wiki-nodes.json")
+        return publish_static_site(
+            nodes,
+            documents,
+            downloader,
+            directory / "data" / "courses.json",
+            directory / "courses",
+            "2026-08-05T00:00:00Z",
+        )
+
+    def test_public_docx_becomes_a_local_course_page_with_local_media(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            payload = self.publish_fixture(root)
+            course = payload["courses"][0]
+            self.assertEqual(payload["schema_version"], 2)
+            self.assertEqual(course["title"], "示例公开课程")
+            self.assertEqual(course["summary"], "这是一门由飞书知识库维护、由 GitHub Pages 完整公开访问的示例课程。")
+            self.assertNotIn("node", course["id"])
+            self.assertNotIn("document_url", course)
+
+            page = (root / course["course_url"] / "index.html").read_text(encoding="utf-8")
+            self.assertIn("课程示意图", page)
+            self.assertIn("课程讲义.txt", page)
+            self.assertIn('src="assets/', page)
+            self.assertIn('href="assets/', page)
+            self.assertNotIn("feishu.cn", page)
+            self.assertEqual(len(list((root / course["course_url"] / "assets").iterdir())), 2)
+
+    def test_withdrawing_all_courses_removes_old_static_pages(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            self.publish_fixture(root)
+            payload = publish_static_site(
+                [],
+                {},
+                lambda _: self.fail("a withdrawn course must not download media"),
+                root / "data" / "courses.json",
+                root / "courses",
+                "2026-08-05T01:00:00Z",
+            )
+            self.assertEqual(payload["courses"], [])
+            self.assertEqual(list((root / "courses").iterdir()), [])
+
+    def test_feishu_links_are_rendered_as_plain_text_but_external_links_remain_links(self):
+        markup = render_inline(
             [
-                {"node_token": "second", "obj_token": "doc-2", "obj_type": "docx", "title": "010-第二门课程"},
-                {"node_token": "folder", "obj_token": "folder-doc", "obj_type": "docx", "title": "内部资料"},
-                {"node_token": "first", "obj_token": "doc-1", "obj_type": "docx", "title": "001-第一门课程"},
-                {"node_token": "sheet", "obj_token": "sheet-1", "obj_type": "sheet", "title": "不支持的类型"},
-            ],
-            {"doc-1": "第一门课程摘要\n其余内容", "doc-2": "第二门课程摘要"},
-            "https://tenant.feishu.cn",
-            "2026-08-05T00:00:00Z",
+                {"text_run": {"content": "飞书资料", "text_element_style": {"link": {"url": "https://tenant.feishu.cn/docx/secret"}}}},
+                {"text_run": {"content": "外部来源", "text_element_style": {"link": {"url": "https://example.com/source"}}}},
+            ]
         )
-        self.assertEqual([course["id"] for course in payload["courses"]], ["first", "second", "folder"])
-        self.assertEqual(payload["courses"][0]["title"], "第一门课程")
-        self.assertEqual(payload["courses"][0]["summary"], "第一门课程摘要")
-        self.assertEqual(payload["courses"][0]["document_url"], "https://tenant.feishu.cn/wiki/first")
-        self.assertEqual(payload["courses"][2]["summary"], "")
-
-    def test_document_heading_is_not_used_as_its_summary(self):
-        payload = normalize_nodes(
-            [{"node_token": "course", "obj_token": "doc", "obj_type": "docx", "title": "001-课程"}],
-            {"doc": "# 001-课程\n真正的课程摘要"},
-            "https://tenant.feishu.cn",
-            "2026-08-05T00:00:00Z",
-        )
-        self.assertEqual(payload["courses"][0]["summary"], "真正的课程摘要")
-
-    def test_non_feishu_base_url_is_rejected(self):
-        with self.assertRaisesRegex(RuntimeError, "feishu.cn"):
-            public_base_url("https://example.com")
+        self.assertNotIn("feishu.cn", markup)
+        self.assertIn("飞书资料", markup)
+        self.assertIn('href="https://example.com/source"', markup)
 
     def test_wiki_root_must_supply_space_id(self):
         with patch("sync_feishu_wiki.request_json", return_value={"data": {"node": {}}}):
@@ -57,6 +91,24 @@ class WikiCatalogueTests(unittest.TestCase):
         self.assertEqual([node["node_token"] for node in nodes], ["one", "two"])
         self.assertIn("parent_node_token=root", request.call_args_list[0].args[0])
         self.assertIn("page_token=next", request.call_args_list[1].args[0])
+
+    def test_document_blocks_are_paginated(self):
+        with patch(
+            "sync_feishu_wiki.request_json",
+            side_effect=[
+                {"data": {"items": [{"block_id": "one"}], "has_more": True, "page_token": "next"}},
+                {"data": {"items": [{"block_id": "two"}], "has_more": False}},
+            ],
+        ) as request:
+            blocks = list_document_blocks("document", "tenant-token")
+        self.assertEqual([block["block_id"] for block in blocks], ["one", "two"])
+        self.assertIn("page_size=500", request.call_args_list[0].args[0])
+        self.assertIn("page_token=next", request.call_args_list[1].args[0])
+
+    def test_fixture_shape_is_json_serializable(self):
+        fixture = json.loads((ROOT / "samples" / "feishu-wiki-nodes.json").read_text(encoding="utf-8"))
+        self.assertIn("documents", fixture)
+        self.assertIn("media", fixture)
 
 
 if __name__ == "__main__":

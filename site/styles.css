@@ -27,3 +27,24 @@ h2 { margin: 0; font-size: clamp(1.65rem, 3vw, 2.5rem); }
 .empty { grid-column: 1 / -1; padding: 40px; border: 1px dashed #b9c4cf; border-radius: 14px; color: #64748b; text-align: center; }
 footer { display: flex; justify-content: space-between; gap: 20px; padding: 30px 0; border-top: 1px solid #dbe3ea; color: #718096; font-size: .86rem; }
 @media (max-width: 800px) { .course-grid { grid-template-columns: 1fr; } .intro, footer { align-items: start; flex-direction: column; } .hero { min-height: 360px; } .hero-content { margin-top: 55px; } }
+.course-hero { color: #fff; background: linear-gradient(125deg, #0d2546 0%, #153d62 58%, #19616d 100%); }
+.back-link { color: #dce8f3; font-weight: 700; text-decoration: none; }
+.back-link:hover, .back-link:focus { color: #fff; text-decoration: underline; }
+.course-main { width: min(840px, calc(100% - 48px)); margin: 0 auto; padding: 64px 0 88px; }
+.course-title { max-width: none; color: #17243a; font-size: clamp(2.2rem, 5vw, 4rem); }
+.course-content { color: #2f4054; font-size: 1.06rem; line-height: 1.9; }
+.course-content h1, .course-content h2, .course-content h3, .course-content h4, .course-content h5, .course-content h6 { margin: 2.1em 0 .7em; color: #17243a; line-height: 1.35; }
+.course-content p { margin: 0 0 1.2em; }
+.course-content a { color: #126b6d; font-weight: 700; }
+.course-content figure { margin: 2em 0; }
+.course-content img { display: block; max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 12px 30px rgba(21, 46, 75, .12); }
+.course-content figcaption { margin-top: .7em; color: #718096; font-size: .88rem; }
+.course-content blockquote { margin: 1.5em 0; padding: .35em 1.2em; border-left: 4px solid #5f9eb1; color: #526276; }
+.course-content pre { overflow-x: auto; padding: 18px; border-radius: 12px; color: #e8f0f6; background: #13263e; }
+.course-content code { padding: .1em .3em; border-radius: 4px; background: #eaf0f4; }
+.course-content pre code { padding: 0; background: transparent; }
+.course-list-item { margin: .45em 0 .45em calc(var(--depth) * 1.25rem); }
+.course-todo { color: #526276; }
+.course-callout, .course-container { margin: 1.3em 0; padding: 1em 1.2em; border-radius: 10px; background: #eaf3f3; }
+.course-download { display: inline-block; padding: 10px 14px; border-radius: 8px; color: #fff !important; background: #176b75; text-decoration: none; }
+.course-download:hover, .course-download:focus { background: #0d5059; }

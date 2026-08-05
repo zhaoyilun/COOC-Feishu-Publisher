@@ -7,13 +7,25 @@
       "title": "001-示例公开课程"
     },
     {
-      "node_token": "folder-node",
-      "obj_token": "folder-document",
-      "obj_type": "docx",
-      "title": "课程资料文件夹"
+      "node_token": "internal-folder",
+      "obj_token": "internal-folder",
+      "obj_type": "wiki",
+      "title": "内部资料"
     }
   ],
-  "raw_content": {
-    "document-001": "这是一门由飞书文档维护的示例公开课程。\n后续正文与附件仍在飞书中协作。"
+  "documents": {
+    "document-001": {
+      "blocks": [
+        {"block_id": "document-001", "block_type": 1, "children": ["heading", "intro", "image", "file"]},
+        {"block_id": "heading", "block_type": 3, "heading1": {"elements": [{"text_run": {"content": "001-示例公开课程", "text_element_style": {}}}]}},
+        {"block_id": "intro", "block_type": 2, "text": {"elements": [{"text_run": {"content": "这是一门由飞书知识库维护、由 GitHub Pages 完整公开访问的示例课程。", "text_element_style": {}}}]}},
+        {"block_id": "image", "block_type": 27, "image": {"token": "image-token", "caption": "课程示意图"}},
+        {"block_id": "file", "block_type": 22, "file": {"token": "file-token", "name": "课程讲义.txt"}}
+      ]
+    }
+  },
+  "media": {
+    "image-token": {"filename": "course.png", "content_type": "image/png", "content_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVQIHWP4z8DwHwAFgAI/ScLKKgAAAABJRU5ErkJggg=="},
+    "file-token": {"filename": "course-notes.txt", "content_type": "text/plain", "content_base64": "Q09PQyDor77nqIvlhazmnKznmoTnpLrkvovlr7znqIvnqI/nmoTmsYvor5Xph4rlupPjgII="}
   }
 }

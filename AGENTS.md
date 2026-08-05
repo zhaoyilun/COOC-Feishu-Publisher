@@ -2,31 +2,31 @@
 
 ## Project Structure
 
-This repository publishes a COOC course catalogue as a static site. `site/` is the deployable artifact: `index.html`, `styles.css`, `app.js`, and generated `site/data/courses.json`. `scripts/` contains the Feishu Bitable synchronizer; `samples/` holds non-sensitive API-shaped fixtures; `tests/` verifies data normalization and publication filtering. `docs/` records the Bitable schema and platform-specific deployment decisions.
+This repository publishes complete COOC courses as a static site. `site/` is the GitHub Pages artifact: the catalogue lives in `site/data/courses.json`; generated courses, images, and downloadable files live under `site/courses/`. `scripts/sync_feishu_wiki.py` is the only content synchronizer. `samples/` contains non-sensitive Feishu API fixtures, and `tests/` verifies filtering, block rendering, media export, and withdrawal cleanup.
 
 ## Development Commands
 
 ```sh
-# Generate public data from the fixture
-python3 scripts/sync_feishu_bitable.py --input samples/feishu-records.json
+# Generate a complete offline course site from the fixture
+python3 scripts/sync_feishu_wiki.py --input samples/feishu-wiki-nodes.json
 
-# Run unit tests
+# Run all publication tests
 python3 -m unittest discover -s tests -v
 
-# Preview the static site
+# Preview the generated static site
 python3 -m http.server 4173 -d site
 ```
 
-The production sync reads `FEISHU_APP_ID`, `FEISHU_APP_SECRET`, `FEISHU_BITABLE_APP_TOKEN`, and `FEISHU_BITABLE_TABLE_ID` from the environment. Never write those values, private Feishu URLs, or attachment tokens to files or logs.
+## Style and Publication Rules
 
-## Style and Data Rules
+Use four-space Python and two-space HTML/CSS/JavaScript indentation. Keep the synchronizer standard-library only. A course is public only when it is a direct `docx` child of the configured `公开课程` Wiki node. Numeric prefixes such as `001-课程名称` control ordering but are omitted from visible titles.
 
-Use four spaces in Python and two spaces in HTML/CSS/JavaScript. Keep Python standard-library only unless a dependency is justified. Field names follow the schema in `docs/field-schema.md`; generated records use `snake_case`. A record is publishable only when `公开发布` is true and its `飞书公开文档链接` is an HTTPS `*.feishu.cn` URL. Unpublished or malformed records must not reach `site/data/courses.json`.
+飞书（Feishu） is an editing source only: generated public pages must never link back to `*.feishu.cn`, expose document or node tokens, or depend on visitor sign-in. Downloaded images and attachments must be stored within the matching `site/courses/<course>/assets/` directory. Unsupported leaf Block types must fail the sync rather than silently omit content.
 
 ## Testing and Review
 
-Run the generator and unit tests before review, then open the local site and verify that only published cards render. When changing the Bitable mapping, add a fixture and test for the new field shape. Pull requests should state the affected schema, whether public data changed, and screenshots for visible layout changes.
+Run the fixture sync and all tests before review. Verify a generated course page contains its body, local images, and local download links; verify removing a course removes its static directory. Add a fixture and test for every newly supported Feishu Block shape.
 
 ## Automation and Deployment
 
-`.github/workflows/sync-feishu.yml` performs scheduled or manual synchronization; GitHub Secrets hold all credentials. Do not enable a public deployment, create a remote repository, or expose a Feishu document until the target owner, visibility, and rollback path are confirmed.
+`.github/workflows/sync-feishu.yml` runs on schedule or manually, commits only generated `site/` changes, then deploys GitHub Pages. Credentials belong only in GitHub Secrets: `FEISHU_APP_ID`, `FEISHU_APP_SECRET`, and `FEISHU_WIKI_PUBLIC_ROOT_TOKEN`. The Feishu app needs published read access to the Wiki, document Blocks, and document media download APIs. Never log tokens, private URLs, or source content outside the intended public output.

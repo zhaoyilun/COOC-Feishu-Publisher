@@ -1,49 +1,48 @@
 # COOC Feishu Publisher
 
-A serverless COOC catalogue: operators maintain only Feishu Wiki documents, while GitHub Actions periodically regenerates the public static catalogue and deploys GitHub Pages.
+A serverless static publisher: course editors maintain Feishu Wiki; learners visit only GitHub Pages. GitHub Actions reads the selected public Wiki directory, renders each document as a static course page, downloads its images and attachments, and deploys the result. No application server or visitor Feishu account is required.
 
 ## Content flow
 
 ```text
-Feishu Wiki
-├─ 公开课程/              # direct child documents become public course cards
+Feishu Wiki (editing source)
+├─ 公开课程/              # direct child documents are published
 └─ 内部资料/              # never read by the publisher
-       -> GitHub Actions (scheduled or manual run)
-       -> site/data/courses.json
-       -> GitHub Pages
-       -> public visitor
+       ↓ GitHub Actions (scheduled or manual)
+       ↓ site/courses/<stable-course-id>/index.html + assets/
+       ↓ site/data/courses.json
+       ↓ GitHub Pages (the only learner-facing entry)
 ```
 
-The public site remains a stable GitHub URL. Each card links to its Feishu document; the long-form course content and attachments stay in Feishu. GitHub Actions is short-lived CI, not an application server.
+Generated course pages do not contain Feishu document links. Moving a document out of `公开课程` removes its generated page and assets at the next successful sync.
 
-## Operator workflow
+## Editor workflow
 
-1. Create or edit a course document directly under `公开课程`.
-2. Move a course out of `公开课程` to withdraw it from the next static sync.
-3. Run **Sync public COOC catalogue from Feishu Wiki** manually, or wait for its daily schedule.
+1. Create or edit one course document directly under `公开课程`.
+2. Put images and downloadable files directly in that document.
+3. Run **Publish complete COOC courses from Feishu Wiki** manually, or wait for the daily schedule.
+4. Visit GitHub Pages to review the complete public result. To withdraw a course, move it into `内部资料` and run the sync again.
 
-Only direct `docx` children of the configured `公开课程` node are emitted. An optional numeric prefix such as `001-课程名称` controls display order and is omitted from the public title. The first non-empty line of each document is used as the card summary.
+An optional prefix such as `001-课程名称` controls ordering only. Document titles, paragraphs, headings, lists, code, quotations, callouts, images, files, and supported containers are emitted as static content. A new unsupported leaf Block fails the sync so public pages are never silently incomplete.
 
 ## Local verification
 
 ```sh
-python3 scripts/sync_feishu_wiki.py \
-  --input samples/feishu-wiki-nodes.json \
-  --base-url https://tenant.feishu.cn
+python3 scripts/sync_feishu_wiki.py --input samples/feishu-wiki-nodes.json
 python3 -m unittest discover -s tests -v
 python3 -m http.server 4173 -d site
 ```
 
 ## Production configuration
 
-Set application credentials only in GitHub Secrets:
+Set these GitHub Secrets only:
 
 - `FEISHU_APP_ID`
 - `FEISHU_APP_SECRET`
 - `FEISHU_WIKI_PUBLIC_ROOT_TOKEN` — the `公开课程` Wiki node token
 
-Set `FEISHU_WIKI_BASE_URL` as a GitHub Actions variable, for example `https://your-tenant.feishu.cn`. The Feishu app needs the published `wiki:wiki:readonly` and `docx:document:readonly` scopes and permission to read the selected Wiki space. No Bitable is required for this flow.
+The Feishu self-built app needs published read permissions for the Wiki, document Blocks, and document media-download API, plus access to the selected Wiki space. The implementation deliberately does not require a Feishu public-share link, Bitable, a GitHub Actions variable, or a server.
 
-## Public-access boundary
+## Public boundary
 
-GitHub Pages always exposes the generated title and summary. The `阅读资料` link is independently controlled by Feishu: a tenant administrator must make `互联网获得链接的人` available, then the owner enables that scope on each public course document. Keep internal documents under `内部资料` and do not enable an external link for them.
+Everything placed directly under `公开课程` is copied into the public GitHub repository and GitHub Pages output, including document text and embedded files. Do not place confidential, copyrighted-for-internal-use, or credential-bearing material there. Keep drafts and internal files under `内部资料`.
