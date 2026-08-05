@@ -113,3 +113,53 @@ class WikiPublisherTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class CourseMetadataTests(unittest.TestCase):
+    def test_metadata_is_exported_to_catalogue_and_hidden_from_course_body(self):
+        nodes = [{"node_token": "meta-node", "obj_token": "meta-doc", "obj_type": "docx", "title": "课程元数据示例"}]
+        blocks = [{
+            "block_id": "meta-doc",
+            "block_type": 1,
+            "children": ["title", "category", "date", "intro", "body", "cover"],
+        }, {
+            "block_id": "title",
+            "block_type": 3,
+            "heading1": {"elements": [{"text_run": {"content": "课程元数据示例", "text_element_style": {}}}]},
+        }, {
+            "block_id": "category",
+            "block_type": 2,
+            "text": {"elements": [{"text_run": {"content": "课程分类：Android", "text_element_style": {}}}]},
+        }, {
+            "block_id": "date",
+            "block_type": 2,
+            "text": {"elements": [{"text_run": {"content": "原始发布日期：2024-05-20", "text_element_style": {}}}]},
+        }, {
+            "block_id": "intro",
+            "block_type": 4,
+            "heading2": {"elements": [{"text_run": {"content": "课程简介", "text_element_style": {}}}]},
+        }, {
+            "block_id": "body",
+            "block_type": 2,
+            "text": {"elements": [{"text_run": {"content": "这是课程正文。", "text_element_style": {}}}]},
+        }, {
+            "block_id": "cover",
+            "block_type": 27,
+            "image": {"token": "cover-token", "caption": {"content": "课程封面"}},
+        }]
+
+        def downloader(_):
+            from sync_feishu_wiki import DownloadedMedia
+            return DownloadedMedia(b"png", "cover.png", "image/png")
+
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            payload = publish_static_site(nodes, {"meta-doc": blocks}, downloader, root / "data" / "courses.json", root / "courses", "2026-08-05T00:00:00Z")
+            course = payload["courses"][0]
+            page = (root / course["course_url"] / "index.html").read_text(encoding="utf-8")
+        self.assertEqual(course["category"], "Android")
+        self.assertEqual(course["published_at"], "2024-05-20")
+        self.assertIn("assets/", course["cover_url"])
+        self.assertEqual(course["summary"], "这是课程正文。")
+        self.assertIn("Android · 2024.05.20", page)
+        self.assertNotIn("课程分类：Android", page)
+        self.assertNotIn("原始发布日期：2024-05-20", page)

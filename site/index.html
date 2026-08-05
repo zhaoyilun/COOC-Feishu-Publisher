@@ -3,37 +3,67 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="COOC 协作式开放在线课程公开目录。">
-  <title>COOC 协作式开放在线课程</title>
+  <meta name="description" content="COOC 协同式开放在线课程。">
+  <title>COOC · 协同式开放在线课程</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <header class="hero">
-    <nav class="nav" aria-label="主导航">
-      <a class="brand" href="./">COOC</a>
-      <span>课程协同创建与公开展示</span>
+  <div class="top-strip"></div>
+  <header class="site-header">
+    <nav class="site-nav" aria-label="主导航">
+      <a class="brand-lockup" href="./" aria-label="COOC 首页"><span class="brand-mark">COOC</span><span>协同式开放在线课程</span></a>
+      <div class="nav-links">
+        <a href="#course-gallery">教程</a>
+        <a href="#course-list">教材</a>
+        <a href="#course-list">视频</a>
+        <a href="#course-list">实验</a>
+        <a href="#about">关于</a>
+      </div>
     </nav>
-    <div class="hero-content">
-      <p class="eyebrow">COLLABORATIVE OPEN ONLINE COURSE</p>
-      <h1>协同创建，持续更新的开放课程</h1>
-      <p>课程由飞书知识库统一维护，正文、图片与附件自动发布到公开站点。</p>
-    </div>
   </header>
 
-  <main>
-    <section class="intro" aria-labelledby="catalogue-title">
-      <div>
-        <p class="eyebrow dark">公开课程目录</p>
-        <h2 id="catalogue-title">完整课程与资料</h2>
+  <main class="site-main">
+    <section class="gallery-section" id="course-gallery" aria-labelledby="gallery-title">
+      <div class="gallery-heading">
+        <div>
+          <p class="section-kicker">COOC CHINA</p>
+          <h1 id="gallery-title">协同式开放在线课程</h1>
+        </div>
+        <button class="gallery-toggle" id="gallery-toggle" type="button" aria-expanded="false">展开课程展示</button>
       </div>
-      <p id="data-status" role="status">正在加载公开课程目录…</p>
+      <p class="gallery-intro">课程内容由飞书知识库统一维护，本站以完整的静态副本面向学习者公开发布。</p>
+      <div class="gallery-grid" id="gallery-grid" aria-live="polite"></div>
     </section>
-    <section id="course-grid" class="course-grid" aria-live="polite"></section>
+
+    <div class="content-layout">
+      <section class="article-stream" id="course-list" aria-labelledby="course-list-title">
+        <div class="stream-heading">
+          <div>
+            <p class="section-kicker">精选课程</p>
+            <h2 id="course-list-title">课程与学习资料</h2>
+          </div>
+          <p class="data-status" id="data-status" role="status">正在加载公开课程目录…</p>
+        </div>
+        <div id="course-stream" aria-live="polite"></div>
+      </section>
+
+      <aside class="sidebar" aria-label="课程导航">
+        <section class="sidebar-panel categories-panel">
+          <h2>课程分类</h2>
+          <div class="category-list" id="category-list"></div>
+        </section>
+        <section class="sidebar-panel" id="about">
+          <h2>关于 COOC</h2>
+          <p>COOC 以协作方式建设开放课程。学习者只需访问本站；编辑者在飞书知识库维护课程正文、图片和附件。</p>
+          <p class="sidebar-note">每次发布都会将内容和媒体写入本站，不要求学习者登录飞书。</p>
+        </section>
+      </aside>
+    </div>
   </main>
 
-  <footer>
-    <span>COOC · 飞书内容管理，GitHub Pages 完整公开发布</span>
+  <footer class="site-footer">
+    <span>COOC · 协同式开放在线课程</span>
     <span id="generated-at"></span>
   </footer>
   <script src="./app.js"></script>

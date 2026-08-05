@@ -27,6 +27,9 @@ DEFAULT_OUTPUT = ROOT / "site" / "data" / "courses.json"
 DEFAULT_COURSE_DIR = ROOT / "site" / "courses"
 ORDERED_TITLE = re.compile(r"^(?P<order>\d+)\s*[-_.、:：]\s*(?P<title>.+)$")
 FEISHU_HOST = re.compile(r"(^|\.)feishu\.cn$", re.IGNORECASE)
+CATEGORY_METADATA = re.compile(r"^课程分类[：:]\s*(?P<value>.+)$")
+DATE_METADATA = re.compile(r"^原始发布日期[：:]\s*(?P<value>\d{4}-\d{1,2}-\d{1,2})$")
+GENERIC_SUMMARY_HEADINGS = {"课程简介", "实验简介", "introduction"}
 
 
 @dataclass(frozen=True)
@@ -34,6 +37,12 @@ class DownloadedMedia:
     content: bytes
     filename: str
     content_type: str
+
+
+@dataclass(frozen=True)
+class CourseMetadata:
+    category: str = "公开课程"
+    published_at: str = ""
 
 
 def scalar(value: Any) -> str:
@@ -55,12 +64,12 @@ def required_env(name: str) -> str:
 
 def request_json(url: str, method: str = "GET", payload: dict[str, Any] | None = None, token: str = "") -> dict[str, Any]:
     data = json.dumps(payload).encode("utf-8") if payload is not None else None
-    headers = {"Content-Type": "application/json"}
+    headers = {"Content-Type": "application/json; charset=utf-8"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
     request = Request(url, data=data, headers=headers, method=method)
     try:
-        with urlopen(request, timeout=20) as response:
+        with urlopen(request, timeout=30) as response:
             response_payload = json.load(response)
     except (HTTPError, URLError, TimeoutError) as error:
         raise RuntimeError(f"Feishu API request failed: {error}") from error
@@ -117,15 +126,43 @@ def block_plain_text(block: dict[str, Any]) -> str:
     return "".join(element_text(element) for element in elements if isinstance(element, dict)).strip()
 
 
-def summary_from_blocks(blocks: list[dict[str, Any]], title: str) -> str:
+def normalized_metadata_date(value: str) -> str:
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").strftime("%Y-%m-%d")
+    except ValueError:
+        return ""
+
+
+def course_metadata(blocks: list[dict[str, Any]]) -> CourseMetadata:
+    category = "公开课程"
+    published_at = ""
     for block in blocks:
         text = block_plain_text(block)
-        if not text:
+        category_match = CATEGORY_METADATA.match(text)
+        if category_match:
+            category = category_match.group("value").strip() or category
+            continue
+        date_match = DATE_METADATA.match(text)
+        if date_match:
+            published_at = normalized_metadata_date(date_match.group("value"))
+    return CourseMetadata(category=category, published_at=published_at)
+
+
+def is_metadata_text(value: str) -> bool:
+    return bool(CATEGORY_METADATA.match(value) or DATE_METADATA.match(value))
+
+
+def summary_from_blocks(blocks: list[dict[str, Any]], title: str) -> str:
+    for block in blocks:
+        kind, _ = block_data(block)
+        text = block_plain_text(block)
+        if not text or is_metadata_text(text):
             continue
         normalized, _ = title_and_order(text.lstrip("#").strip())
-        if normalized == title:
+        if normalized == title or text.lower() in GENERIC_SUMMARY_HEADINGS:
             continue
-        return text[:240]
+        if kind in {"text", "bullet", "quote"}:
+            return text[:240]
     return ""
 
 
@@ -227,6 +264,13 @@ def fixture_media_downloader(media: dict[str, Any]) -> Callable[[str], Downloade
     return download
 
 
+def image_caption(data: dict[str, Any]) -> str:
+    caption = data.get("caption")
+    if isinstance(caption, dict):
+        return scalar(caption.get("content"))
+    return scalar(caption)
+
+
 class StaticCourseRenderer:
     def __init__(self, blocks: list[dict[str, Any]], title: str, course_dir: Path, media_downloader: Callable[[str], DownloadedMedia]):
         self.blocks = {scalar(block.get("block_id")): block for block in blocks if isinstance(block, dict) and scalar(block.get("block_id"))}
@@ -236,6 +280,7 @@ class StaticCourseRenderer:
         self.media_paths: dict[str, str] = {}
         self.seen: set[str] = set()
         self.skipped_title = False
+        self.cover_path = ""
 
     def media_path(self, file_token: str) -> str:
         cached = self.media_paths.get(file_token)
@@ -275,15 +320,17 @@ class StaticCourseRenderer:
         kind, data = block_data(block)
         children = self.render_children(block.get("children", []), depth + 1)
         inline = render_inline(data.get("elements", []))
+        plain = block_plain_text(block)
 
         if kind.startswith("heading"):
             level = int(kind.removeprefix("heading"))
-            plain = block_plain_text(block)
             if not self.skipped_title and title_and_order(plain)[0] == self.title:
                 self.skipped_title = True
                 return children
             return f"<h{level}>{inline}</h{level}>{children}"
         if kind in {"text", "page"}:
+            if is_metadata_text(plain):
+                return children
             paragraph = f"<p>{inline}</p>" if inline else ""
             return paragraph + children
         if kind == "bullet":
@@ -306,7 +353,9 @@ class StaticCourseRenderer:
             if not file_token:
                 raise RuntimeError("image block did not include a media token")
             path = self.media_path(file_token)
-            caption = html.escape(scalar(data.get("caption")))
+            if not self.cover_path:
+                self.cover_path = path
+            caption = html.escape(image_caption(data))
             return f'<figure><img src="{path}" alt="{caption or "课程图片"}">{f"<figcaption>{caption}</figcaption>" if caption else ""}</figure>{children}'
         if kind == "file":
             file_token = scalar(data.get("token"))
@@ -322,7 +371,12 @@ class StaticCourseRenderer:
         raise RuntimeError(f"unsupported Feishu block type: {block.get('block_type', 'unknown')}")
 
 
-def course_page(title: str, body: str) -> str:
+def display_date(value: str) -> str:
+    return value.replace("-", ".") if value else ""
+
+
+def course_page(title: str, body: str, metadata: CourseMetadata) -> str:
+    meta = " · ".join(part for part in (metadata.category, display_date(metadata.published_at)) if part)
     return f"""<!doctype html>
 <html lang=\"zh-CN\">
 <head>
@@ -330,21 +384,32 @@ def course_page(title: str, body: str) -> str:
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">
   <meta name=\"description\" content=\"{html.escape(title, quote=True)} - COOC 公开课程\">
   <title>{html.escape(title)} · COOC</title>
+  <link rel=\"icon\" href=\"../../favicon.svg\" type=\"image/svg+xml\">
   <link rel=\"stylesheet\" href=\"../../styles.css\">
 </head>
 <body>
-  <header class=\"course-hero\">
-    <nav class=\"nav\" aria-label=\"主导航\"><a class=\"brand\" href=\"../../\">COOC</a><a class=\"back-link\" href=\"../../\">返回课程目录</a></nav>
+  <div class=\"top-strip\"></div>
+  <header class=\"site-header\">
+    <nav class=\"site-nav course-nav\" aria-label=\"主导航\">
+      <a class=\"brand-lockup\" href=\"../../\"><span class=\"brand-mark\">COOC</span><span>协同式开放在线课程</span></a>
+      <a class=\"nav-back\" href=\"../../\">返回课程目录</a>
+    </nav>
   </header>
-  <main class=\"course-main\">
-    <p class=\"eyebrow dark\">公开课程</p>
-    <h1 class=\"course-title\">{html.escape(title)}</h1>
-    <article class=\"course-content\">{body or '<p>课程正文正在整理。</p>'}</article>
+  <main class=\"course-page-layout\">
+    <article class=\"course-article panel\">
+      <div class=\"panel-heading\"><span>精选课程</span></div>
+      <div class=\"course-article-inner\">
+        <h1>{html.escape(title)}</h1>
+        <p class=\"course-meta\">{html.escape(meta)}</p>
+        <div class=\"course-content\">{body or '<p>课程正文正在整理。</p>'}</div>
+      </div>
+    </article>
   </main>
-  <footer><span>COOC · 由飞书知识库自动同步至 GitHub Pages</span></footer>
+  <footer class=\"site-footer\"><span>COOC · 飞书内容管理，GitHub Pages 完整公开发布</span></footer>
 </body>
 </html>
 """
+
 
 
 def publish_static_site(
@@ -364,7 +429,6 @@ def publish_static_site(
         title, sort_order = title_and_order(node.get("title"))
         if node_token and document_id and title:
             candidates.append((node_token, document_id, title, sort_order))
-    candidates.sort(key=lambda item: (item[3], item[2], item[0]))
 
     staging = course_dir.with_name(f".{course_dir.name}.staging")
     shutil.rmtree(staging, ignore_errors=True)
@@ -377,20 +441,30 @@ def publish_static_site(
         slug = course_slug(node_token)
         target = staging / slug
         target.mkdir(parents=True, exist_ok=True)
+        metadata = course_metadata(blocks)
         renderer = StaticCourseRenderer(blocks, title, target, media_downloader)
         body = renderer.render_document(document_id)
-        (target / "index.html").write_text(course_page(title, body), encoding="utf-8")
+        course_url = f"courses/{slug}/"
+        (target / "index.html").write_text(course_page(title, body, metadata), encoding="utf-8")
         courses.append(
             {
                 "id": course_id(node_token),
                 "title": title,
                 "summary": summary_from_blocks(blocks, title),
-                "category": "公开课程",
-                "course_url": f"courses/{slug}/",
-                "updated_at": "",
+                "category": metadata.category,
+                "course_url": course_url,
+                "cover_url": f"{course_url}{renderer.cover_path}" if renderer.cover_path else "",
+                "published_at": metadata.published_at,
+                "updated_at": metadata.published_at,
                 "sort_order": sort_order,
             }
         )
+
+    numeric_courses = [course for course in courses if course["sort_order"] < 999999]
+    dated_courses = [course for course in courses if course["sort_order"] >= 999999]
+    numeric_courses.sort(key=lambda course: (course["sort_order"], course["title"]))
+    dated_courses.sort(key=lambda course: (course["published_at"], course["title"]), reverse=True)
+    courses = numeric_courses + dated_courses
 
     shutil.rmtree(course_dir, ignore_errors=True)
     staging.replace(course_dir)

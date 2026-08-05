@@ -1,0 +1,33 @@
+name: Import 20 COOC-China courses into Feishu
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type IMPORT_COOC_CHINA_20 to create missing official courses in Feishu
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: import-cooc-china-courses
+  cancel-in-progress: false
+
+jobs:
+  import:
+    if: github.event.inputs.confirm == 'IMPORT_COOC_CHINA_20'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Import official COOC-China course documents and covers
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_WIKI_PUBLIC_ROOT_TOKEN: ${{ secrets.FEISHU_WIKI_PUBLIC_ROOT_TOKEN }}
+        run: python scripts/import_cooc_china.py
