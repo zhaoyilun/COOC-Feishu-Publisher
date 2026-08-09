@@ -2,7 +2,7 @@
 
 ## Project Structure
 
-This repository publishes complete COOC courses as a static site. `site/` is the GitHub Pages artifact: the catalogue lives in `site/data/courses.json`; generated courses, images, and downloadable files live under `site/courses/`. `scripts/sync_feishu_wiki.py` is the ongoing content synchronizer. `scripts/import_cooc_china.py` initializes the official course catalogue, and `scripts/import_embedded_system_book.py` is a guarded, idempotent full-text initializer for the authorized `Embedded-System-Development-Book`; neither is part of the recurring publish path. `samples/` contains non-sensitive Feishu API fixtures, and `tests/` verifies filtering, block rendering, media export, and withdrawal cleanup.
+This repository publishes complete COOC courses as a static site. `site/` is the GitHub Pages artifact: the catalogue lives in `site/data/courses.json`; generated courses, images, and downloadable files live under `site/courses/`. `scripts/sync_feishu_wiki.py` is the ongoing content synchronizer. `scripts/import_cooc_china.py` initializes the official course catalogue, and `scripts/import_embedded_system_book.py` is a guarded, idempotent full-text initializer for the authorized `Embedded-System-Development-Book`; neither is part of the recurring publish path. `docs/feishu-course-maintenance-how-to.md` is the teacher-facing operating guide, while `docs/github-pages-deployment.md` covers deployment and migration. `samples/` contains non-sensitive Feishu API fixtures, and `tests/` verifies filtering, block rendering, media export, and withdrawal cleanup.
 
 ## Development Commands
 
